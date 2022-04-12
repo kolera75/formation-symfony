@@ -44,6 +44,23 @@ class BookController extends AbstractController
 		]);
 	}
 
+    #[Route('/admin/livres/{id}/modifier', name: 'app_admin_book_update', methods: ['GET', 'POST'])]
+	public function update(Book $book, Request $request, BookRepository $repository): Response
+	{
+		$form = $this->createForm(BookType::class, $book);
+
+		$form->handleRequest($request);
+
+		if ($form->isSubmitted() && $form->isValid()) {
+			$repository->add($form->getData());
+
+			return $this->redirectToRoute('app_admin_book_list');
+		}
+
+		return $this->render('admin/book/update.html.twig', [
+			'form' => $form->createView(),
+		]);
+	}
     
     
 }
