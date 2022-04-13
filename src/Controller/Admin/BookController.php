@@ -17,12 +17,16 @@ use Symfony\Component\Routing\Annotation\Route;
 class BookController extends AbstractController
 {
 	#[Route('/admin/livres', name: 'app_admin_book_list', methods: ['GET', 'POST'])]
-	public function list(BookRepository $repository): Response
+	public function list(BookRepository $repository, Request $request): Response
 	{
 		$form = $this->createForm(SearchBookType::class, new BookSearchCriteria());
 
+		$form->handleRequest($request);
+
+		$searchCriteria = $form->getData();
+
 		return $this->render('admin/book/list.html.twig', [
-			'books' => $repository->findAll(),
+			'books' => $repository->findByCriteria($searchCriteria),
 			'form' => $form->createView(),
 		]);
 	}
