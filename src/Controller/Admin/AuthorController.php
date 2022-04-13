@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Controller\Admin;
 
 use App\Entity\Author;
@@ -28,7 +30,9 @@ class AuthorController extends AbstractController
 	public function create(Request $request, AuthorRepository $repository): Response
 	{
 		// Création d'un formulaire :
-		$form = $this->createForm(AuthorType::class, new Author());
+			$form = $this->createForm(AuthorType::class, new Author(), [
+				'handleDates' => false,
+			]);
 
 		// On remplie notre formulaire avec les données de request si il y en as
 		$form->handleRequest($request);
@@ -51,7 +55,9 @@ class AuthorController extends AbstractController
 	public function update(Author $author, Request $request, AuthorRepository $repository): Response
 	{
 		// Création d'un formulaire :
-		$form = $this->createForm(AuthorType::class, $author);
+			$form = $this->createForm(AuthorType::class, $author, [
+				'handleDates' => true,
+			]);
 
 		// On remplie notre formulaire avec les données de request si il y en as
 		$form->handleRequest($request);
@@ -76,5 +82,15 @@ class AuthorController extends AbstractController
 		$repository->remove($author);
 
 		return $this->redirectToRoute('app_admin_author_list');
+	}
+
+	#[Route('/admin/auteurs/par-nom/{name}', name: 'app_admin_author_listByName')]
+	public function listByName(AuthorRepository $repository, string $name): Response
+	{
+		$authors = $repository->findByName($name);
+
+		return $this->render('admin/author/listByName.html.twig', [
+			'authors' => $authors,
+		]);
 	}
 }

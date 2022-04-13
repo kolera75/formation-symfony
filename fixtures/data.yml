@@ -1,0 +1,41 @@
+# Génération des auteurs de la base de données
+App\Entity\Author:
+  # Création d 'une clefs de génération qui nous
+  # servira à identifié l'auteur pour la mise en place
+  # des relations
+  author1:
+    # On spécifie les propriété et leur valeurs de l'entité Author que l'on veut générer
+    name: 'John'
+    description: 'Description de John'
+    
+  author{2..50}:
+    name: <fr_FR:name()>
+    description: <fr_FR:realText()>
+  
+
+
+
+App\Entity\Category:
+  category1{1..100}:
+    title: <fr_FR:catchPhrase()>
+
+
+    
+
+App\Entity\Book:
+  book1:
+    title: Harry Potter
+    description: 'Description de Harry Potter'
+    price: 9.75
+    author: "@author*"
+    categories: '2x @category*'
+  book{2..100}:
+    title: <fr_FR:catchPhrase()>
+    description: <fr_FR:realText()>
+    price: <randomFloat(2, 5, 40)>
+    author: "@author*"
+    categories: '<numberBetween(2, 5)>x @category*'
+   
+
+    
+    
