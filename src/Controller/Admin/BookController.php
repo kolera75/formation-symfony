@@ -7,26 +7,22 @@ namespace App\Controller\Admin;
 use App\Entity\Book;
 use App\Form\BookType;
 use App\Repository\BookRepository;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class BookController extends AbstractController
 {
-    #[Route('/admin/livres/', name: 'app_admin_book_list', methods: ['GET'])]
-    public function list(BookRepository $repository): Response
-    {
-        $books = $repository->findAll();
+	#[Route('/admin/livres', name: 'app_admin_book_list', methods: ['GET'])]
+	public function list(BookRepository $repository): Response
+	{
+		return $this->render('admin/book/list.html.twig', [
+			'books' => $repository->findAll(),
+		]);
+	}
 
-        return $this->render('admin/book/list.html.twig', [
-            'books' => $books,
-        ]);
-
-
-    }
-
-    #[Route('/admin/livres/nouveau', name: 'app_admin_book_create', methods: ['GET', 'POST'])]
+	#[Route('/admin/livres/nouveau', name: 'app_admin_book_create', methods: ['GET', 'POST'])]
 	public function create(Request $request, BookRepository $repository): Response
 	{
 		$form = $this->createForm(BookType::class, new Book());
@@ -44,7 +40,7 @@ class BookController extends AbstractController
 		]);
 	}
 
-    #[Route('/admin/livres/{id}/modifier', name: 'app_admin_book_update', methods: ['GET', 'POST'])]
+	#[Route('/admin/livres/{id}/modifier', name: 'app_admin_book_update', methods: ['GET', 'POST'])]
 	public function update(Book $book, Request $request, BookRepository $repository): Response
 	{
 		$form = $this->createForm(BookType::class, $book);
@@ -62,7 +58,7 @@ class BookController extends AbstractController
 		]);
 	}
 
-    #[Route('/admin/livres/{id}/supprimer', name: 'app_admin_book_delete', methods: ['GET'])]
+	#[Route('/admin/livres/{id}/supprimer', name: 'app_admin_book_delete', methods: ['GET'])]
 	public function delete(Book $book, BookRepository $repository): Response
 	{
 		$repository->remove($book);
@@ -70,6 +66,33 @@ class BookController extends AbstractController
 		return $this->redirectToRoute('app_admin_book_list');
 	}
 
-    
-    
+	#[Route('/admin/livres/par-prix/{min}/{max}', name: 'app_admin_book_listByPrice')]
+	public function listByPrice(BookRepository $repository, float $min, float $max): Response
+	{
+		$books = $repository->findByPriceBetween($min, $max);
+
+		return $this->render('admin/book/listByPrice.html.twig', [
+			'books' => $books,
+		]);
+	}
+
+	#[Route('/admin/livres/par-auteur/{authorName}', name: 'app_admin_author_listByAuthorName')]
+	public function listByAuthorName(BookRepository $repository, string $authorName): Response
+	{
+		$books = $repository->findByAuthorName($authorName);
+
+		return $this->render('admin/book/listByAuthorName.html.twig', [
+			'books' => $books,
+		]);
+	}
+
+	#[Route('/admin/livres/par-categorie/{categoryName}', name: 'app_admin_book_listBycategoryName')]
+	public function listByCategoryName(BookRepository $repository, string $categoryName): Response
+	{
+		$books = $repository->findByCategoryName($categoryName);
+
+		return $this->render('admin/book/listByCategoryName.html.twig', [
+			'books' => $books,
+		]);
+	}
 }

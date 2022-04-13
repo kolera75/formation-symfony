@@ -45,32 +45,50 @@ class BookRepository extends ServiceEntityRepository
         }
     }
 
-    // /**
-    //  * @return Book[] Returns an array of Book objects
-    //  */
-    /*
-    public function findByExampleField($value)
+    /**
+     * Récupére tout les livres dont le prix est entre
+     * le minimum et maximum spécifié en paramètre
+     */
+    public function findByPriceBetween(float $minimum, float $maximum): array
     {
-        return $this->createQueryBuilder('b')
-            ->andWhere('b.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('b.id', 'ASC')
-            ->setMaxResults(10)
+        return $this
+            ->createQueryBuilder('book')
+            ->orderBy('book.price', 'ASC')
+            ->andWhere('book.price >= :min')
+            ->andWhere('book.price <= :max')
+            ->setParameter('min', $minimum)
+            ->setParameter('max', $maximum)
             ->getQuery()
-            ->getResult()
-        ;
+            ->getResult();
     }
-    */
 
-    /*
-    public function findOneBySomeField($value): ?Book
+    /**
+     * Recherche des livres par nom d'auteur
+     */
+    public function findByAuthorName(string $authorName): array
     {
-        return $this->createQueryBuilder('b')
-            ->andWhere('b.exampleField = :val')
-            ->setParameter('val', $value)
+        return $this
+            ->createQueryBuilder('book')
+            ->leftJoin('book.author', 'author')
+            ->andWhere('author.name LIKE :name')
+            ->setParameter('name', "%$authorName%")
+            ->orderBy('book.price', 'ASC')
             ->getQuery()
-            ->getOneOrNullResult()
-        ;
+            ->getResult();
     }
-    */
+
+    /**
+     * Recherche des livres par catégorie
+     */
+    public function findByCategoryName(string $categoryName): array
+    {
+        return $this
+            ->createQueryBuilder('book')
+            ->leftJoin('book.categories', 'category')
+            ->andWhere('category.title LIKE :category')
+            ->setParameter('category', "%$categoryName%")
+            ->orderBy('book.price', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
 }
