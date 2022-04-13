@@ -16,7 +16,7 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class BookController extends AbstractController
 {
-	#[Route('/admin/livres', name: 'app_admin_book_list', methods: ['GET', 'POST'])]
+	#[Route('/admin/livres', name: 'app_admin_book_list', methods: ['GET'])]
 	public function list(BookRepository $repository, Request $request): Response
 	{
 		$form = $this->createForm(SearchBookType::class, new BookSearchCriteria());
