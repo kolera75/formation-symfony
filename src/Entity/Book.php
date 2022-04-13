@@ -38,6 +38,8 @@ class Book
     private $author;
 
     #[ORM\ManyToMany(targetEntity: Category::class)]
+
+    private $page;
     private $categories;
 
     public function __construct()

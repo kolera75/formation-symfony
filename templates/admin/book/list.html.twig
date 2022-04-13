@@ -1,49 +1,48 @@
-{% extends "base.html.twig" %}
+{% extends 'base.html.twig' %}
 
 {% block body %}
 <h1>Liste des livres</h1>
-
 
 <p>
 	<a href="{{ path('app_admin_book_create') }}">Créer un livre</a>
 </p>
 
-
+{# Test si nous avons des livres #}
 {% if books is empty %}
-	<p>Il n'y a pas encore de livres</p>
+	<p>Il n'y a pas encore de livre</p>
 {% else %}
 
-<table>
-	<thead>
-		<tr>
-			<th>Identifiant</th>
-			<th>Titre</th>
-            <th>Auteur</th>
-            <th>Date de créationr</th>
-			<th>Date de mise à jour</th>
-            <th>Actions</th>
-		</tr>
-	</thead>
-	<tbody>
-    {% for book in books %}
-			<tr>
-				<td>{{ book.id }}</td>
-				<td>{{ book.title }}</td>
-                <td>{{ book.author.name }}</td>
-                <td>{{ book.updatedAt|date('d/m/Y à h:i') }}</td>
-				<td>{{ book.updatedAt|date('d/m/Y à h:i') }}</td>
-				<td>
-					<a href="{{ path('app_admin_book_update', {
-						id: book.id,
-					}) }}">Modifier</a>
-					<a href="{{ path('app_admin_book_delete', {
-						id: book.id,
-					}) }}">Supprimer</a>
-				</td>
-			</tr>
-		{% endfor %}
-	</tbody>
+<h2>Rechercher</h2>
+<form>
+	<div>
+		<label>Par titre :</label>
+		<input type="text" name="title" id="title" />
+	</div>
+	<div>
+		<label>Par Auteur :</label>
+		<input type="text" name="author" id="author" />
+	</div>
+	<div>
+		<label>Par Category :</label>
+		<input type="text" name="category" id="category" />
+	</div>
+	<div>
+		<label>Nombre de résultat par page :</label>
+		<input type="text" name="limit" id="limit" value="15" />
+	</div>
+	<div>
+		<label>Page :</label>
+		<input type="text" name="page" id="page" value="1" />
+	</div>
+	<div>
+		<label>Trier par :</label>
+		<select name="sortBy">
+			<option value="price">Prix</option>
+		</select>
+	</div>
+</form>
 </table>
 
 {% endif %}
+
 {% endblock %}
