@@ -2,11 +2,11 @@
 
 namespace App\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
 use App\Repository\BookRepository;
-use Doctrine\Common\Collections\Collection;
-use Gedmo\Mapping\Annotation\Timestampable;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Mapping\Annotation\Timestampable;
 
 #[ORM\Entity(repositoryClass: BookRepository::class)]
 class Book
@@ -19,8 +19,11 @@ class Book
     #[ORM\Column(type: 'string', length: 255)]
     private $title;
 
-    #[ORM\Column(type: 'text')]
+    #[ORM\Column(type: 'text', nullable: true)]
     private $description;
+
+    #[ORM\Column(type: 'float')]
+    private $price;
 
     #[ORM\Column(type: 'datetime')]
     #[Timestampable(on: 'create')]
@@ -30,16 +33,11 @@ class Book
     #[Timestampable(on: 'update')]
     private $updatedAt;
 
-    #[ORM\Column(type: 'float')]
-    private $price;
-
     #[ORM\ManyToOne(targetEntity: Author::class, inversedBy: 'books')]
     #[ORM\JoinColumn(nullable: false)]
     private $author;
 
     #[ORM\ManyToMany(targetEntity: Category::class)]
-
-    private $page;
     private $categories;
 
     public function __construct()
@@ -69,9 +67,21 @@ class Book
         return $this->description;
     }
 
-    public function setDescription(string $description): self
+    public function setDescription(?string $description): self
     {
         $this->description = $description;
+
+        return $this;
+    }
+
+    public function getPrice(): ?float
+    {
+        return $this->price;
+    }
+
+    public function setPrice(float $price): self
+    {
+        $this->price = $price;
 
         return $this;
     }
@@ -100,18 +110,6 @@ class Book
         return $this;
     }
 
-    public function getPrice(): ?float
-    {
-        return $this->price;
-    }
-
-    public function setPrice(float $price): self
-    {
-        $this->price = $price;
-
-        return $this;
-    }
-
     public function getAuthor(): ?Author
     {
         return $this->author;
@@ -125,14 +123,14 @@ class Book
     }
 
     /**
-     * @return Collection<int, category>
+     * @return Collection<int, Category>
      */
     public function getCategories(): Collection
     {
         return $this->categories;
     }
 
-    public function addCategory(category $category): self
+    public function addCategory(Category $category): self
     {
         if (!$this->categories->contains($category)) {
             $this->categories[] = $category;
@@ -141,7 +139,7 @@ class Book
         return $this;
     }
 
-    public function removeCategory(category $category): self
+    public function removeCategory(Category $category): self
     {
         $this->categories->removeElement($category);
 
